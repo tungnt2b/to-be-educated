@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Hello everyone</h1>
+  <button type="button" id='download-btn'>Download</button>
+  <input title="Upload" type="file" id="file-upload" />
+
+  <div>
+    <img id="img" alt="" width="1000">
+  </div>
+
+  <!-- <div>
+    <video id="videoPlayer" width="50%" controls>
+      <source src="http://localhost:3000/video" type="video/mp4" />
+    </video>
+  </div> -->
+
+  <script>
+    const downloadBtn = document.getElementById('download-btn');
+    const pathSelector = document.getElementById('path');
+    const img = document.getElementById('img');
+
+    downloadBtn.addEventListener('click', download);
+
+    async function download() {
+      const response = await fetch(`http://localhost:3000/download`);
+
+      const blob = await response.blob();
+      const imageUrl = window.URL.createObjectURL(blob);
+      img.src = imageUrl;
+
+      // const reader = response.body.getReader();
+
+      // const chunks = [];
+
+      // while (true) {
+      //   const { done, value } = await reader.read();
+
+      //   if (done) {
+      //     console.log('Done');
+      //     break;
+      //   }
+
+      //   chunks.push(value);
+      // }
+
+      // console.log('chunks.length', chunks.length);
+      // const blob = new Blob(chunks);
+      // const imageUrl = window.URL.createObjectURL(blob);
+      // img.src = imageUrl;
+    }
+
+    const uploadInput = document.getElementById('file-upload').addEventListener('change', upload)
+
+    async function upload(e) {
+      const file = e.target.files[0]
+
+      if (file == null) return
+
+      const response = await fetch(`http://localhost:3000/upload`, {
+        headers: {
+          'filename': file.name
+        },
+        method: 'POST',
+        body: file
+      })
+
+      const message = await response.text()
+      console.log(message)
+    }
+  </script>
+</body>
+
+</html>
